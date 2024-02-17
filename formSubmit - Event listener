@@ -1,0 +1,35 @@
+<script>
+var Webflow = Webflow || [];
+
+// Execute this function when Webflow has finished loading
+Webflow.push(function() {
+  // Unbind default Webflow form handling to customize behavior
+  $(document).off('submit');
+
+  // Attach a submit event listener to all forms on the page
+  $('form').submit(function(e) {
+    // Prevent the default form submission behavior
+    e.preventDefault();
+
+    // Select the submitted form
+    var $form = $(this);
+
+    // Serialize the form data into an array of objects
+    var formData = $form.serializeArray();
+
+    // Initialize the dataLayer if it doesn't exist
+    window.dataLayer = window.dataLayer || [];
+
+    // Push an event to the dataLayer indicating a form submission
+    window.dataLayer.push({
+      'event': 'formSubmission', // Custom event name for tracking
+      'formId': $form.attr('id'), // Include the form ID in the data
+      'formData': formData.reduce(function(obj, item) {
+        // Convert the serialized form data into a key-value object
+        obj[item.name] = item.value;
+        return obj;
+      }, {})
+    });
+  });
+});
+</script>
