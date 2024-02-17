@@ -1,20 +1,9 @@
 <script>
 var Webflow = Webflow || [];
 Webflow.push(function() {  
-  // unbind webflow form handling (keep this if you only want to affect specific forms)
-  $(document).off('submit');
-
   /* Any form on the page */
-  $('form').submit(function(e) {
-    e.preventDefault();
-
+  $('form').submit(function() {
     var $form = $(this); // The submitted form
-    var $submit = $('[type=submit]', $form); // Submit button of form
-    var buttonText = $submit.val(); // Original button text
-    var buttonWaitingText = $submit.attr('data-wait'); // Waiting button text value
-    var formMethod = $form.attr('method'); // Form method (where it submits to)
-    var formAction = $form.attr('action'); // Form action (GET/POST)
-    var formRedirect = $form.attr('data-redirect'); // Form redirect location
     var formData = $form.serializeArray(); // Form data as an array
 
     // Push form data to dataLayer
@@ -28,33 +17,10 @@ Webflow.push(function() {
       }, {})
     });
 
-    // Set waiting text
-    if (buttonWaitingText) {
-      $submit.val(buttonWaitingText); 
-    }
+    // Optional: Log the form data to the console for debugging
+    console.log('Form Data:', formData);
 
-    $.ajax(formAction, {
-      data: $form.serialize(),
-      method: formMethod
-    })
-    .done(function(res) {
-      // If form redirect setting set, then use this and prevent any other actions
-      if (formRedirect) { window.location = formRedirect; return; }
-
-      $form
-        .hide() // optional hiding of form
-        .siblings('.w-form-done').show() // Show success
-        .siblings('.w-form-fail').hide(); // Hide failure
-    })
-    .fail(function(res) {
-      $form
-        .siblings('.w-form-done').hide() // Hide success
-        .siblings('.w-form-fail').show(); // show failure
-    })
-    .always(function() {
-      // Reset text
-      $submit.val(buttonText);
-    });
+    // Allow the form to continue with its default submission behavior
   });
 });
 </script>
